@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Rising Progeny Predictor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --dragon-primary: #8e44ad;
+            --dragon-secondary: #3498db;
+            --dragon-tertiary: #e74c3c;
+            --dragon-dark: #2c3e50;
+            --dragon-light: #ecf0f1;
+            --dragon-gold: #f39c12;
+            --dragon-fire: #e74c3c;
+            --dragon-ice: #3498db;
+            --dragon-nature: #27ae60;
+            --dragon-shadow: #8e44ad;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 3px solid var(--dragon-gold);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #ffcc00;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 20px;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--dragon-primary), var(--dragon-secondary));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .dragon-section {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+            gap: 30px;
+        }
+        
+        .dragon-card {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(to bottom right, #2c3e50, #1a1a2e);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .dragon-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .dragon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--dragon-gold);
+        }
+        
+        .dragon-title {
+            font-size: 1.8rem;
+            color: var(--dragon-gold);
+        }
+        
+        .trait {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        
+        .trait:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .color-block {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        
+        .color-block:hover {
+            transform: scale(1.1);
+        }
+        
+        .trait-info {
+            flex-grow: 1;
+        }
+        
+        .trait-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .customization {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .custom-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        select {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: none;
+            background: var(--dragon-dark);
+            color: white;
+            font-size: 1rem;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        select:hover {
+            background: #34495e;
+        }
+        
+        .offspring-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin: 20px 0;
+            color: var(--dragon-gold);
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+        
+        .offspring-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .egg-card {
+            background: radial-gradient(circle at 30% 30%, #f8f9fa, #e9ecef);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .egg-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .egg-number {
+            position: absolute;
+            top: 20px;
+            background: var(--dragon-gold);
+            color: var(--dragon-dark);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .egg-dragon {
+            color: var(--dragon-dark);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 15px 0;
+        }
+        
+        .egg-trait {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            color: var(--dragon-dark);
+            justify-content: center;
+        }
+        
+        .egg-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px;
+            font-size: 0.95rem;
+        }
+        
+        .info-panel h3 {
+            color: var(--dragon-gold);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .rules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .rule-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .rule-item h4 {
+            color: var(--dragon-gold);
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.4);
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .dragon-section {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dragon"></i> Flight Rising Progeny Predictor</h1>
+            <p class="subtitle">Advanced genetics simulator with breed-specific traits and inheritance rules</p>
+        </header>
+        
+        <div class="controls">
+            <button id="randomize-all"><i class="fas fa-random"></i> Randomize Both Dragons</button>
+            <button id="breed-btn"><i class="fas fa-egg"></i> Predict Progeny</button>
+        </div>
+        
+        <div class="dragon-section">
+            <!-- Parent 1 Card -->
+            <div class="dragon-card">
+                <div class="dragon-header">
+                    <h2 class="dragon-title"><i class="fas fa-dragon"></i> Parent Dragon 1</h2>
+                    <button id="randomize-parent1"><i class="fas fa-dice"></i> Randomize</button>
+                </div>
+                
+                <!-- Primary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent1-primary-color" style="background-color: #8e44ad;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Primary</div>
+                        <div class="trait-value" id="parent1-primary-text">Iridescent - Amethyst</div>
+                    </div>
+                </div>
+                
+                <!-- Secondary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent1-secondary-color" style="background-color: #3498db;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Secondary</div>
+                        <div class="trait-value" id="parent1-secondary-text">Shimmer - Sky</div>
+                    </div>
+                </div>
+                
+                <!-- Tertiary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent1-tertiary-color" style="background-color: #e74c3c;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Tertiary</div>
+                        <div class="trait-value" id="parent1-tertiary-text">Gembond - Ruby</div>
+                    </div>
+                </div>
+                
+                <!-- Customization Panel -->
+                <div class="customization">
+                    <h3><i class="fas fa-sliders-h"></i> Customize</h3>
+                    
+                    <!-- Breed Selection -->
+                    <div class="custom-row">
+                        <label>Breed:</label>
+                        <select id="parent1-breed"></select>
+                    </div>
+                    
+                    <!-- Primary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Primary Gene:</label>
+                        <select id="parent1-primary-gene"></select>
+                    </div>
+                    
+                    <!-- Primary Color Selection -->
+                    <div class="custom-row">
+                        <label>Primary Color:</label>
+                        <select id="parent1-primary-color-select"></select>
+                    </div>
+                    
+                    <!-- Secondary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Gene:</label>
+                        <select id="parent1-secondary-gene"></select>
+                    </div>
+                    
+                    <!-- Secondary Color Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Color:</label>
+                        <select id="parent1-secondary-color-select"></select>
+                    </div>
+                    
+                    <!-- Tertiary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Gene:</label>
+                        <select id="parent1-tertiary-gene"></select>
+                    </div>
+                    
+                    <!-- Tertiary Color Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Color:</label>
+                        <select id="parent1-tertiary-color-select"></select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Parent 2 Card -->
+            <div class="dragon-card">
+                <div class="dragon-header">
+                    <h2 class="dragon-title"><i class="fas fa-dragon"></i> Parent Dragon 2</h2>
+                    <button id="randomize-parent2"><i class="fas fa-dice"></i> Randomize</button>
+                </div>
+                
+                <!-- Primary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent2-primary-color" style="background-color: #2ecc71;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Primary</div>
+                        <div class="trait-value" id="parent2-primary-text">Speckle - Emerald</div>
+                    </div>
+                </div>
+                
+                <!-- Secondary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent2-secondary-color" style="background-color: #f39c12;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Secondary</div>
+                        <div class="trait-value" id="parent2-secondary-text">Stripes - Honey</div>
+                    </div>
+                </div>
+                
+                <!-- Tertiary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent2-tertiary-color" style="background-color: #9b59b6;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Tertiary</div>
+                        <div class="trait-value" id="parent2-tertiary-text">Underbelly - Royal</div>
+                    </div>
+                </div>
+                
+                <!-- Customization Panel -->
+                <div class="customization">
+                    <h3><i class="fas fa-sliders-h"></i> Customize</h3>
+                    
+                    <!-- Breed Selection -->
+                    <div class="custom-row">
+                        <label>Breed:</label>
+                        <select id="parent2-breed"></select>
+                    </div>
+                    
+                    <!-- Primary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Primary Gene:</label>
+                        <select id="parent2-primary-gene"></select>
+                    </div>
+                    
+                    <!-- Primary Color Selection -->
+                    <div class="custom-row">
+                        <label>Primary Color:</label>
+                        <select id="parent2-primary-color-select"></select>
+                    </div>
+                    
+                    <!-- Secondary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Gene:</label>
+                        <select id="parent2-secondary-gene"></select>
+                    </div>
+                    
+                    <!-- Secondary Color Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Color:</label>
+                        <select id="parent2-secondary-color-select"></select>
+                    </div>
+                    
+                    <!-- Tertiary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Gene:</label>
+                        <select id="parent2-tertiary-gene"></select>
+                    </div>
+                    
+                    <!-- Tertiary Color Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Color:</label>
+                        <select id="parent2-tertiary-color-select"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3><i class="fas fa-dna"></i> Inheritance Rules & Genetics</h3>
+            <div class="rules-list">
+                <div class="rule-item">
+                    <h4>Breed Inheritance</h4>
+                    <p>Offspring have a 50/50 chance to inherit either parent's breed unless special rules apply.</p>
+                    <p>Imperial dragons have a 70% chance to pass their breed.</p>
+                </div>
+                <div class="rule-item">
+                    <h4>Gene Inheritance</h4>
+                    <p>Genes are inherited independently for each slot (primary, secondary, tertiary).</p>
+                    <p>Some genes are breed-restricted and will revert to Basic if incompatible.</p>
+                </div>
+                <div class="rule-item">
+                    <h4>Color Inheritance</h4>
+                    <p>Colors are inherited independently for each slot from either parent.</p>
+                    <p>Rare colors have a lower inheritance chance (25% vs 50%).</p>
+                </div>
+                <div class="rule-item">
+                    <h4>Special Traits</h4>
+                    <p>Certain breeds have unique traits:</p>
+                    <p>• Fae: Can pass secondary genes more frequently</p>
+                    <p>• Guardian: Higher chance for rare colors</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="offspring-title">Predicted Offspring</h2>
+        <div class="offspring-container" id="offspring-container">
+            <!-- Offspring will appear here -->
+        </div>
+        
+        <footer>
+            <p>Flight Rising Progeny Predictor - A fan-made tool | All data manually collected per Flight Rising's Terms of Use</p>
+            <p>This tool runs completely in your browser - no data is sent to any server</p>
+        </footer>
+    </div>
+
+    <script>
+        // Complete Dragon Data with Inheritance Rules
+        const dragonData = {
+            breeds: [
+                { id: "fae", name: "Fae", 
+                  allowedGenes: { primary: ["Basic", "Iridescent", "Tiger", "Clown"], 
+                                 secondary: ["Basic", "Shimmer", "Stripes", "EyeSpots"], 
+                                 tertiary: ["Basic", "Gembond"] },
+                  inheritanceBias: 0.5,
+                  specialTraits: ["Higher secondary gene inheritance"] },
+                
+                { id: "guardian", name: "Guardian", 
+                  allowedGenes: { primary: ["Basic", "Clown", "Speckle", "Crystal"], 
+                                 secondary: ["Basic", "EyeSpots", "Seraph", "Smirch"], 
+                                 tertiary: ["Basic", "Underbelly"] },
+                  inheritanceBias: 0.5,
+                  specialTraits: ["Increased rare color chance"] },
+                
+                { id: "mirror", name: "Mirror", 
+                  allowedGenes: { primary: ["Basic", "Crystal", "Facet", "Bar"], 
+                                 secondary: ["Basic", "Smirch", "Daub", "Current"], 
+                                 tertiary: ["Basic", "Filigree"] },
+                  inheritanceBias: 0.5,
+                  specialTraits: ["Unique primary patterns"] },
+                
+                { id: "imperial", name: "Imperial", 
+                  allowedGenes: { primary: ["Basic", "Facet", "Bar", "Cherub"], 
+                                 secondary: ["Basic", "Daub", "Current", "Paint"], 
+                                 tertiary: ["Basic", "Filigree", "Contour"] },
+                  inheritanceBias: 0.7, // 70% chance to pass breed
+                  specialTraits: ["Dominant breed inheritance"] },
+                
+                { id: "ridgeback", name: "Ridgeback", 
+                  allowedGenes: { primary: ["Basic", "Tiger", "Speckle", "Bar"], 
+                                 secondary: ["Basic", "Stripes", "Seraph", "Daub"], 
+                                 tertiary: ["Basic", "Gembond", "Contour"] },
+                  inheritanceBias: 0.5,
+                  specialTraits: ["Distinctive spine patterns"] }
+            ],
+            
+            genes: [
+                // Primary Genes
+                { type: "primary", id: "basic", name: "Basic" },
+                { type: "primary", id: "iridescent", name: "Iridescent", rarity: "uncommon" },
+                { type: "primary", id: "tiger", name: "Tiger", rarity: "rare" },
+                { type: "primary", id: "clown", name: "Clown", rarity: "rare" },
+                { type: "primary", id: "speckle", name: "Speckle", rarity: "uncommon" },
+                { type: "primary", id: "crystal", name: "Crystal", rarity: "rare" },
+                { type: "primary", id: "facet", name: "Facet", rarity: "very rare" },
+                { type: "primary", id: "bar", name: "Bar", rarity: "uncommon" },
+                { type: "primary", id: "cherub", name: "Cherub", rarity: "rare" },
+                
+                // Secondary Genes
+                { type: "secondary", id: "basic", name: "Basic" },
+                { type: "secondary", id: "shimmer", name: "Shimmer", rarity: "uncommon" },
+                { type: "secondary", id: "stripes", name: "Stripes", rarity: "uncommon" },
+                { type: "secondary", id: "eyespots", name: "EyeSpots", rarity: "rare" },
+                { type: "secondary", id: "seraph", name: "Seraph", rarity: "rare" },
+                { type: "secondary", id: "smirch", name: "Smirch", rarity: "uncommon" },
+                { type: "secondary", id: "daub", name: "Daub", rarity: "uncommon" },
+                { type: "secondary", id: "current", name: "Current", rarity: "rare" },
+                { type: "secondary", id: "paint", name: "Paint", rarity: "very rare" },
+                
+                // Tertiary Genes
+                { type: "tertiary", id: "basic", name: "Basic" },
+                { type: "tertiary", id: "gembond", name: "Gembond", rarity: "rare" },
+                { type: "tertiary", id: "underbelly", name: "Underbelly", rarity: "uncommon" },
+                { type: "tertiary", id: "filigree", name: "Filigree", rarity: "very rare" },
+                { type: "tertiary", id: "contour", name: "Contour", rarity: "rare" }
+            ],
+            
+            colors: [
+                {id: 1, name: "White", hex: "#FFFFFF", rarity: "common"},
+                {id: 2, name: "Antique", hex: "#FAEBD7", rarity: "common"},
+                {id: 3, name: "Cream", hex: "#FFFDD0", rarity: "common"},
+                {id: 4, name: "Ivory", hex: "#FFFFF0", rarity: "common"},
+                {id: 5, name: "Platinum", hex: "#E5E4E2", rarity: "common"},
+                {id: 6, name: "Silver", hex: "#C0C0C0", rarity: "common"},
+                {id: 7, name: "Gray", hex: "#808080", rarity: "common"},
+                {id: 8, name: "Charcoal", hex: "#36454F", rarity: "uncommon"},
+                {id: 9, name: "Black", hex: "#000000", rarity: "uncommon"},
+                {id: 10, name: "Obsidian", hex: "#352F44", rarity: "uncommon"},
+                {id: 11, name: "Midnight", hex: "#2B1B17", rarity: "rare"},
+                {id: 12, name: "Shadow", hex: "#2F4F4F", rarity: "rare"},
+                {id: 13, name: "Coal", hex: "#3D3C3A", rarity: "common"},
+                {id: 14, name: "Lead", hex: "#3A3B3C", rarity: "common"},
+                {id: 15, name: "Oil", hex: "#3B3131", rarity: "uncommon"},
+                {id: 16, name: "Crow", hex: "#4D4D4D", rarity: "common"},
+                {id: 17, name: "Slate", hex: "#708090", rarity: "common"},
+                {id: 18, name: "Steel", hex: "#4863A0", rarity: "uncommon"},
+                {id: 19, name: "Stone", hex: "#7F735F", rarity: "common"},
+                {id: 20, name: "Pebble", hex: "#B8B799", rarity: "common"},
+                {id: 21, name: "Amethyst", hex: "#8e44ad", rarity: "rare"},
+                {id: 22, name: "Sky", hex: "#3498db", rarity: "uncommon"},
+                {id: 23, name: "Ruby", hex: "#e74c3c", rarity: "rare"},
+                {id: 24, name: "Emerald", hex: "#2ecc71", rarity: "rare"},
+                {id: 25, name: "Honey", hex: "#f39c12", rarity: "uncommon"}
+            ]
+        };
+
+        // DOM Elements
+        const randomizeParent1Btn = document.getElementById('randomize-parent1');
+        const randomizeParent2Btn = document.getElementById('randomize-parent2');
+        const randomizeAllBtn = document.getElementById('randomize-all');
+        const breedBtn = document.getElementById('breed-btn');
+        const offspringContainer = document.getElementById('offspring-container');
+        
+        // Parent dragons
+        let parent1 = createRandomDragon();
+        let parent2 = createRandomDragon();
+        
+        // Initialize the UI
+        initializeUI();
+        updateDragonDisplay();
+        
+        // Event Listeners
+        randomizeParent1Btn.addEventListener('click', () => {
+            parent1 = createRandomDragon();
+            updateDragonDisplay();
+        });
+        
+        randomizeParent2Btn.addEventListener('click', () => {
+            parent2 = createRandomDragon();
+            updateDragonDisplay();
+        });
+        
+        randomizeAllBtn.addEventListener('click', () => {
+            parent1 = createRandomDragon();
+            parent2 = createRandomDragon();
+            updateDragonDisplay();
+        });
+        
+        breedBtn.addEventListener('click', predictOffspring);
+        
+        // Initialize UI elements
+        function initializeUI() {
+            // Populate breed dropdowns
+            const breedSelects = document.querySelectorAll('select[id$="breed"]');
+            breedSelects.forEach(select => {
+                dragonData.breeds.forEach(breed => {
+                    const option = document.createElement('option');
+                    option.value = breed.id;
+                    option.textContent = breed.name;
+                    select.appendChild(option);
+                });
+                
+                // Add event listener to update genes when breed changes
+                select.addEventListener('change', function() {
+                    updateGeneOptions(this);
+                    updateDragonFromUI();
+                });
+            });
+            
+            // Populate gene dropdowns
+            const geneSelects = document.querySelectorAll('select[id$="gene"]');
+            geneSelects.forEach(select => {
+                const geneType = select.id.includes('primary') ? 'primary' : 
+                                select.id.includes('secondary') ? 'secondary' : 'tertiary';
+                                
+                const genes = dragonData.genes.filter(g => g.type === geneType);
+                genes.forEach(gene => {
+                    const option = document.createElement('option');
+                    option.value = gene.id;
+                    option.textContent = gene.name;
+                    select.appendChild(option);
+                });
+                
+                // Add event listener
+                select.addEventListener('change', updateDragonFromUI);
+            });
+            
+            // Populate color dropdowns
+            const colorSelects = document.querySelectorAll('select[id$="color-select"]');
+            colorSelects.forEach(select => {
+                dragonData.colors.forEach(color => {
+                    const option = document.createElement('option');
+                    option.value = color.hex;
+                    option.textContent = color.name;
+                    option.dataset.id = color.id;
+                    select.appendChild(option);
+                });
+                
+                // Add event listener
+                select.addEventListener('change', updateDragonFromUI);
+            });
+        }
+        
+        // Update gene options based on selected breed
+        function updateGeneOptions(breedSelect) {
+            const parentNum = breedSelect.id.includes('parent1') ? 1 : 2;
+            const breedId = breedSelect.value;
+            const breed = dragonData.breeds.find(b => b.id === breedId);
+            
+            // Update primary gene dropdown
+            const primaryGeneSelect = document.getElementById(`parent${parentNum}-primary-gene`);
+            updateSelectOptions(primaryGeneSelect, breed.allowedGenes.primary);
+            
+            // Update secondary gene dropdown
+            const secondaryGeneSelect = document.getElementById(`parent${parentNum}-secondary-gene`);
+            updateSelectOptions(secondaryGeneSelect, breed.allowedGenes.secondary);
+            
+            // Update tertiary gene dropdown
+            const tertiaryGeneSelect = document.getElementById(`parent${parentNum}-tertiary-gene`);
+            updateSelectOptions(tertiaryGeneSelect, breed.allowedGenes.tertiary);
+        }
+        
+        // Helper to update select options
+        function updateSelectOptions(select, allowedValues) {
+            // Clear existing options
+            while (select.options.length > 0) {
+                select.remove(0);
+            }
+            
+            // Add allowed options
+            allowedValues.forEach(value => {
+                const gene = dragonData.genes.find(g => g.id === value.toLowerCase());
+                if (gene) {
+                    const option = document.createElement('option');
+                    option.value = gene.id;
+                    option.textContent = gene.name;
+                    select.appendChild(option);
+                }
+            });
+        }
+        
+        // Create a random dragon
+        function createRandomDragon() {
+            const breed = dragonData.breeds[Math.floor(Math.random() * dragonData.breeds.length)];
+            
+            const primaryGene = getRandomGene('primary', breed);
+            const secondaryGene = getRandomGene('secondary', breed);
+            const tertiaryGene = getRandomGene('tertiary', breed);
+            
+            const primaryColor = dragonData.colors[Math.floor(Math.random() * dragonData.colors.length)];
+            const secondaryColor = dragonData.colors[Math.floor(Math.random() * dragonData.colors.length)];
+            const tertiaryColor = dragonData.colors[Math.floor(Math.random() * dragonData.colors.length)];
+            
+            return {
+                breed: breed.id,
+                primary: { gene: primaryGene.id, color: primaryColor },
+                secondary: { gene: secondaryGene.id, color: secondaryColor },
+                tertiary: { gene: tertiaryGene.id, color: tertiaryColor }
+            };
+        }
+        
+        // Get a random gene that's allowed for the breed
+        function getRandomGene(type, breed) {
+            const allowedGenes = breed.allowedGenes[type];
+            const geneId = allowedGenes[Math.floor(Math.random() * allowedGenes.length)];
+            return dragonData.genes.find(g => g.id === geneId.toLowerCase());
+        }
+        
+        // Update the display with current dragon data
+        function updateDragonDisplay() {
+            // Update Parent 1
+            updateDragonUI(parent1, 1);
+            
+            // Update Parent 2
+            updateDragonUI(parent2, 2);
+        }
+        
+        // Update UI for a specific dragon
+        function updateDragonUI(dragon, parentNum) {
+            const breed = dragonData.breeds.find(b => b.id === dragon.breed);
+            
+            // Update breed dropdown
+            document.getElementById(`parent${parentNum}-breed`).value = dragon.breed;
+            
+            // Update gene dropdowns
+            document.getElementById(`parent${parentNum}-primary-gene`).value = dragon.primary.gene;
+            document.getElementById(`parent${parentNum}-secondary-gene`).value = dragon.secondary.gene;
+            document.getElementById(`parent${parentNum}-tertiary-gene`).value = dragon.tertiary.gene;
+            
+            // Update color dropdowns
+            document.getElementById(`parent${parentNum}-primary-color-select`).value = dragon.primary.color.hex;
+            document.getElementById(`parent${parentNum}-secondary-color-select`).value = dragon.secondary.color.hex;
+            document.getElementById(`parent${parentNum}-tertiary-color-select`).value = dragon.tertiary.color.hex;
+            
+            // Update color blocks
+            document.getElementById(`parent${parentNum}-primary-color`).style.backgroundColor = dragon.primary.color.hex;
+            document.getElementById(`parent${parentNum}-secondary-color`).style.backgroundColor = dragon.secondary.color.hex;
+            document.getElementById(`parent${parentNum}-tertiary-color`).style.backgroundColor = dragon.tertiary.color.hex;
+            
+            // Update text
+            document.getElementById(`parent${parentNum}-primary-text`).textContent = 
+                `${getGeneName(dragon.primary.gene)} - ${dragon.primary.color.name}`;
+            
+            document.getElementById(`parent${parentNum}-secondary-text`).textContent = 
+                `${getGeneName(dragon.secondary.gene)} - ${dragon.secondary.color.name}`;
+            
+            document.getElementById(`parent${parentNum}-tertiary-text`).textContent = 
+                `${getGeneName(dragon.tertiary.gene)} - ${dragon.tertiary.color.name}`;
+        }
+        
+        // Update dragons from UI selections
+        function updateDragonFromUI() {
+            // Update Parent 1
+            parent1 = getDragonFromUI(1);
+            
+            // Update Parent 2
+            parent2 = getDragonFromUI(2);
+            
+            // Refresh display
+            updateDragonDisplay();
+        }
+        
+        // Get dragon data from UI selections
+        function getDragonFromUI(parentNum) {
+            const breedId = document.getElementById(`parent${parentNum}-breed`).value;
+            const breed = dragonData.breeds.find(b => b.id === breedId);
+            
+            const primaryGene = document.getElementById(`parent${parentNum}-primary-gene`).value;
+            const secondaryGene = document.getElementById(`parent${parentNum}-secondary-gene`).value;
+            const tertiaryGene = document.getElementById(`parent${parentNum}-tertiary-gene`).value;
+            
+            const primaryColorHex = document.getElementById(`parent${parentNum}-primary-color-select`).value;
+            const secondaryColorHex = document.getElementById(`parent${parentNum}-secondary-color-select`).value;
+            const tertiaryColorHex = document.getElementById(`parent${parentNum}-tertiary-color-select`).value;
+            
+            const primaryColor = dragonData.colors.find(c => c.hex === primaryColorHex);
+            const secondaryColor = dragonData.colors.find(c => c.hex === secondaryColorHex);
+            const tertiaryColor = dragonData.colors.find(c => c.hex === tertiaryColorHex);
+            
+            return {
+                breed: breed.id,
+                primary: { gene: primaryGene, color: primaryColor },
+                secondary: { gene: secondaryGene, color: secondaryColor },
+                tertiary: { gene: tertiaryGene, color: tertiaryColor }
+            };
+        }
+        
+        // Get gene name by ID
+        function getGeneName(geneId) {
+            const gene = dragonData.genes.find(g => g.id === geneId);
+            return gene ? gene.name : "Basic";
+        }
+        
+        // Predict and display offspring
+        function predictOffspring() {
+            // Update dragons from UI first
+            updateDragonFromUI();
+            
+            // Clear existing offspring
+            offspringContainer.innerHTML = '';
+            
+            // Random clutch size (1-5 eggs)
+            const clutchSize = Math.floor(Math.random() * 5) + 1;
+            
+            for (let i = 0; i < clutchSize; i++) {
+                const offspring = createOffspring();
+                displayOffspring(offspring, i + 1);
+            }
+        }
+        
+        // Create a single offspring dragon with inheritance rules
+        function createOffspring() {
+            // Determine breed with inheritance rules
+            const breed = inheritBreed();
+            
+            // Inherit traits
+            return {
+                breed: breed.id,
+                primary: inheritTrait('primary', breed),
+                secondary: inheritTrait('secondary', breed),
+                tertiary: inheritTrait('tertiary', breed)
+            };
+        }
+        
+        // Implement breed inheritance rules
+        function inheritBreed() {
+            const breed1 = dragonData.breeds.find(b => b.id === parent1.breed);
+            const breed2 = dragonData.breeds.find(b => b.id === parent2.breed);
+            
+            // If one breed has a bias
+            if (breed1.inheritanceBias !== 0.5 || breed2.inheritanceBias !== 0.5) {
+                // Imperial breed bias rule
+                if (breed1.id === "imperial" && breed2.id !== "imperial") {
+                    return Math.random() < breed1.inheritanceBias ? breed1 : breed2;
+                }
+                if (breed2.id === "imperial" && breed1.id !== "imperial") {
+                    return Math.random() < breed2.inheritanceBias ? breed2 : breed1;
+                }
+                
+                // General bias rule
+                const totalBias = breed1.inheritanceBias + breed2.inheritanceBias;
+                return Math.random() < (breed1.inheritanceBias / totalBias) ? breed1 : breed2;
+            }
+            
+            // Standard 50/50 inheritance
+            return Math.random() < 0.5 ? breed1 : breed2;
+        }
+        
+        // Implement trait inheritance with breed validation
+        function inheritTrait(type, breed) {
+            // Determine which parent to inherit from
+            const inheritFromParent1 = Math.random() < 0.5;
+            
+            // Get trait from selected parent
+            const parentTrait = inheritFromParent1 ? 
+                parent1[type] : 
+                parent2[type];
+            
+            // Check if gene is allowed for offspring breed
+            const allowedGenes = breed.allowedGenes[type];
+            let gene = parentTrait.gene;
+            
+            // If gene is not allowed, revert to Basic
+            if (!allowedGenes.includes(gene)) {
+                gene = "basic";
+            }
+            
+            // Apply rarity factor - rare traits have lower inheritance chance
+            const parentGene = dragonData.genes.find(g => g.id === parentTrait.gene);
+            if (parentGene && parentGene.rarity === "rare" && Math.random() > 0.6) {
+                // If rare gene, 40% chance to not inherit
+                gene = "basic";
+            }
+            if (parentGene && parentGene.rarity === "very rare" && Math.random() > 0.75) {
+                // If very rare gene, 25% chance to inherit
+                gene = "basic";
+            }
+            
+            // Apply color rarity factor
+            let color = parentTrait.color;
+            if (color.rarity === "rare" && Math.random() > 0.6) {
+                // If rare color, 40% chance to not inherit
+                color = getRandomCommonColor();
+            }
+            if (color.rarity === "very rare" && Math.random() > 0.8) {
+                // If very rare color, 20% chance to inherit
+                color = getRandomCommonColor();
+            }
+            
+            return { gene, color };
+        }
+        
+        // Get a random common color
+        function getRandomCommonColor() {
+            const commonColors = dragonData.colors.filter(c => c.rarity === "common");
+            return commonColors[Math.floor(Math.random() * commonColors.length)];
+        }
+        
+        // Display an offspring dragon
+        function displayOffspring(dragon, index) {
+            const breed = dragonData.breeds.find(b => b.id === dragon.breed);
+            const primaryGene = dragonData.genes.find(g => g.id === dragon.primary.gene);
+            const secondaryGene = dragonData.genes.find(g => g.id === dragon.secondary.gene);
+            const tertiaryGene = dragonData.genes.find(g => g.id === dragon.tertiary.gene);
+            
+            const eggCard = document.createElement('div');
+            eggCard.className = 'egg-card';
+            eggCard.innerHTML = `
+                <div class="egg-number">${index}</div>
+                <div class="egg-dragon">${breed.name}</div>
+                <div class="egg-trait">
+                    <div class="egg-color" style="background-color: ${dragon.primary.color.hex}"></div>
+                    <div>${primaryGene.name} - ${dragon.primary.color.name}</div>
+                </div>
+                <div class="egg-trait">
+                    <div class="egg-color" style="background-color: ${dragon.secondary.color.hex}"></div>
+                    <div>${secondaryGene.name} - ${dragon.secondary.color.name}</div>
+                </div>
+                <div class="egg-trait">
+                    <div class="egg-color" style="background-color: ${dragon.tertiary.color.hex}"></div>
+                    <div>${tertiaryGene.name} - ${dragon.tertiary.color.name}</div>
+                </div>
+            `;
+            
+            offspringContainer.appendChild(eggCard);
+        }
+    </script>
+</body>
+</html>
