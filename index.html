@@ -2456,80 +2456,95 @@ function breedDragons(parent1, parent2) {
     
     // Generate 5 offspring
     for (let i = 0; i < 5; i++) {
-        // Determine breed - updated logic
-        let breed;
-        
-        if (parent1IsAncient && parent2IsAncient) {
-            // Both ancient - must be same breed, so use either
-            breed = parent1.breed;
-        } else if (parent1.breed.id === parent2.breed.id) {
-            // Same breed
-            breed = parent1.breed;
-        } else {
-            // Different non-ancient breeds - use rarity-based selection
-            const rarity1 = parent1.breed.rarity;
-            const rarity2 = parent2.breed.rarity;
+        try {
+            // Determine breed - updated logic
+            let breed;
             
-            if (rarity1 === rarity2) {
-                breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
+            if (parent1IsAncient && parent2IsAncient) {
+                // Both ancient - must be same breed, so use either
+                breed = parent1.breed;
+            } else if (parent1.breed.id === parent2.breed.id) {
+                // Same breed
+                breed = parent1.breed;
             } else {
-                const rank1 = getRarityRank(rarity1);
-                const rank2 = getRarityRank(rarity2);
-                const rarer = rank1 > rank2 ? parent1.breed : parent2.breed;
-                const lessRare = rank1 > rank2 ? parent2.breed : parent1.breed;
+                // Different non-ancient breeds - use rarity-based selection
+                const rarity1 = parent1.breed.rarity;
+                const rarity2 = parent2.breed.rarity;
                 
-                const odds = data.breedOdds[lessRare.rarity][rarer.rarity] || 0.5;
-                breed = Math.random() < odds ? rarer : lessRare;
+                if (rarity1 === rarity2) {
+                    breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
+                } else {
+                    const rank1 = getRarityRank(rarity1);
+                    const rank2 = getRarityRank(rarity2);
+                    const rarer = rank1 > rank2 ? parent1.breed : parent2.breed;
+                    const lessRare = rank1 > rank2 ? parent2.breed : parent1.breed;
+                    
+                    const odds = data.breedOdds[lessRare.rarity][rarer.rarity] || 0.5;
+                    breed = Math.random() < odds ? rarer : lessRare;
+                }
             }
+            
+            // Determine gender (50/50)
+            const gender = Math.random() < 0.5 ? 0 : 1;
+            
+            // Determine genes with error handling
+            let primaryGene, secondaryGene, tertiaryGene;
+            try {
+                primaryGene = determineGene(parent1.primaryGene, parent2.primaryGene, "primary");
+                secondaryGene = determineGene(parent1.secondaryGene, parent2.secondaryGene, "secondary");
+                tertiaryGene = determineGene(parent1.tertiaryGene, parent2.tertiaryGene, "tertiary");
+            } catch (error) {
+                console.error('Error determining genes:', error);
+                // Fallback to parent genes if determination fails
+                primaryGene = Math.random() < 0.5 ? parent1.primaryGene : parent2.primaryGene;
+                secondaryGene = Math.random() < 0.5 ? parent1.secondaryGene : parent2.secondaryGene;
+                tertiaryGene = Math.random() < 0.5 ? parent1.tertiaryGene : parent2.tertiaryGene;
+            }
+            
+            // Ensure genes are compatible with the offspring breed
+            const compatiblePrimaryGenes = filterGenesForBreed(data.primaryGenes, breed.id);
+            const compatibleSecondaryGenes = filterGenesForBreed(data.secondaryGenes, breed.id);
+            const compatibleTertiaryGenes = filterGenesForBreed(data.tertiaryGenes, breed.id);
+            
+            // If selected gene isn't compatible, choose a random compatible one
+            let finalPrimaryGene = primaryGene;
+            let finalSecondaryGene = secondaryGene;
+            let finalTertiaryGene = tertiaryGene;
+            
+            if (!compatiblePrimaryGenes.some(g => g.id === primaryGene.id)) {
+                finalPrimaryGene = getRandomElement(compatiblePrimaryGenes);
+            }
+            if (!compatibleSecondaryGenes.some(g => g.id === secondaryGene.id)) {
+                finalSecondaryGene = getRandomElement(compatibleSecondaryGenes);
+            }
+            if (!compatibleTertiaryGenes.some(g => g.id === tertiaryGene.id)) {
+                finalTertiaryGene = getRandomElement(compatibleTertiaryGenes);
+            }
+            
+            // Determine colors
+            const primaryColor = determineColor(parent1.primaryColor, parent2.primaryColor);
+            const secondaryColor = determineColor(parent1.secondaryColor, parent2.secondaryColor);
+            const tertiaryColor = determineColor(parent1.tertiaryColor, parent2.tertiaryColor);
+            
+            // Determine eye type based on probability
+            const eyeType = getRandomElement(data.eyeTypes);
+            
+            offspring.push({
+                breed,
+                gender,
+                primaryGene: finalPrimaryGene,
+                secondaryGene: finalSecondaryGene,
+                tertiaryGene: finalTertiaryGene,
+                primaryColor,
+                secondaryColor,
+                tertiaryColor,
+                eyeType
+            });
+            
+        } catch (error) {
+            console.error('Error generating offspring', i, ':', error);
+            // Skip this offspring if there's an error
         }
-        
-        // Determine gender (50/50)
-        const gender = Math.random() < 0.5 ? 0 : 1;
-        
-        // Determine genes
-        const primaryGene = determineGene(parent1.primaryGene, parent2.primaryGene, "primary");
-        const secondaryGene = determineGene(parent1.secondaryGene, parent2.secondaryGene, "secondary");
-        const tertiaryGene = determineGene(parent1.tertiaryGene, parent2.tertiaryGene, "tertiary");
-        
-        // Ensure genes are compatible with the offspring breed
-        const compatiblePrimaryGenes = filterGenesForBreed(data.primaryGenes, breed.id);
-        const compatibleSecondaryGenes = filterGenesForBreed(data.secondaryGenes, breed.id);
-        const compatibleTertiaryGenes = filterGenesForBreed(data.tertiaryGenes, breed.id);
-        
-        // If selected gene isn't compatible, choose a random compatible one
-        let finalPrimaryGene = primaryGene;
-        let finalSecondaryGene = secondaryGene;
-        let finalTertiaryGene = tertiaryGene;
-        
-        if (!compatiblePrimaryGenes.some(g => g.id === primaryGene.id)) {
-            finalPrimaryGene = getRandomElement(compatiblePrimaryGenes);
-        }
-        if (!compatibleSecondaryGenes.some(g => g.id === secondaryGene.id)) {
-            finalSecondaryGene = getRandomElement(compatibleSecondaryGenes);
-        }
-        if (!compatibleTertiaryGenes.some(g => g.id === tertiaryGene.id)) {
-            finalTertiaryGene = getRandomElement(compatibleTertiaryGenes);
-        }
-        
-        // Determine colors
-        const primaryColor = determineColor(parent1.primaryColor, parent2.primaryColor);
-        const secondaryColor = determineColor(parent1.secondaryColor, parent2.secondaryColor);
-        const tertiaryColor = determineColor(parent1.tertiaryColor, parent2.tertiaryColor);
-        
-        // Determine eye type based on probability
-        const eyeType = getRandomElement(data.eyeTypes);
-        
-        offspring.push({
-            breed,
-            gender,
-            primaryGene: finalPrimaryGene,
-            secondaryGene: finalSecondaryGene,
-            tertiaryGene: finalTertiaryGene,
-            primaryColor,
-            secondaryColor,
-            tertiaryColor,
-            eyeType
-        });
     }
     
     return offspring;
@@ -2773,42 +2788,61 @@ function setupEventListeners() {
             });
         }
         
-        // Breed button - FIXED
-        if (breedBtn) {
-            breedBtn.addEventListener('click', () => {
-                debugLog('Breed button clicked');
-                try {
-                    const parent1 = getDragonFromForm(1);
-                    const parent2 = getDragonFromForm(2);
-                    
-                    // Clear previous results first
-                    clearOffspringContainer();
-                    
-                    // Check if breeding is possible
-                    if (!canBreed(parent1, parent2)) {
-                        const container = document.getElementById('offspring-container');
-                        if (container) {
-                            container.innerHTML = `
-                                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
-                                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                                    <h3>Breeding Incompatible</h3>
-                                    <p>Ancient breeds can only breed with the same exact breed.</p>
-                                    <p>${parent1.breed.name} cannot breed with ${parent2.breed.name}.</p>
-                                </div>
-                            `;
-                        }
-                        return;
-                    }
-                    
-                    // Generate offspring
-                    const offspring = breedDragons(parent1, parent2);
-                    displayOffspring(offspring);
-                    
-                } catch (error) {
-                    console.error('Error breeding dragons:', error);
+    // Breed button - UPDATED
+if (breedBtn) {
+    breedBtn.addEventListener('click', () => {
+        debugLog('Breed button clicked');
+        try {
+            const parent1 = getDragonFromForm(1);
+            const parent2 = getDragonFromForm(2);
+            
+            // Debug: log the parent data
+            console.log('Parent 1:', parent1);
+            console.log('Parent 2:', parent2);
+            
+            // Clear previous results first
+            clearOffspringContainer();
+            
+            // Check if breeding is possible
+            if (!canBreed(parent1, parent2)) {
+                const container = document.getElementById('offspring-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                            <h3>Breeding Incompatible</h3>
+                            <p>Ancient breeds can only breed with the same exact breed.</p>
+                            <p>${parent1.breed.name} cannot breed with ${parent2.breed.name}.</p>
+                        </div>
+                    `;
                 }
-            });
+                return;
+            }
+            
+            // Generate offspring
+            const offspring = breedDragons(parent1, parent2);
+            console.log('Offspring generated:', offspring);
+            
+            // Display offspring
+            displayOffspring(offspring);
+            
+        } catch (error) {
+            console.error('Error breeding dragons:', error);
+            // Show error message to user
+            const container = document.getElementById('offspring-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
+                        <i class="fas fa-bug" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>Breeding Error</h3>
+                        <p>There was an error generating offspring.</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
         }
+    });
+}
         
         // Breed change listeners
         document.querySelectorAll('select[id$="-breed"]').forEach(select => {
