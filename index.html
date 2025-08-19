@@ -2746,6 +2746,67 @@ function getDragonFromForm(parentNum) {
     };
 }
 
+// ADD displayOffspring FUNCTION RIGHT HERE
+function displayOffspring(offspring) {
+    debugLog('Displaying offspring');
+    const container = document.getElementById('offspring-container');
+    
+    if (!container) {
+        console.error('Offspring container not found');
+        return;
+    }
+    
+    // Clear previous results
+    container.innerHTML = '';
+    
+    // Check if there are any offspring to display
+    if (offspring.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">
+                <i class="fas fa-egg" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                <h3>No Offspring</h3>
+                <p>The dragons did not produce any offspring.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Display each offspring
+    offspring.forEach((dragon, index) => {
+        const egg = document.createElement('div');
+        egg.className = 'egg-card';
+        
+        const url = generateScryingUrl(dragon);
+        
+        egg.innerHTML = `
+            <div class="egg-number">${index + 1}</div>
+            <div class="egg-dragon">${dragon.breed.name}</div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.primaryColor.hex};"></div>
+                ${dragon.primaryGene.name} - ${dragon.primaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.secondaryColor.hex};"></div>
+                ${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.tertiaryColor.hex};"></div>
+                ${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <i class="fas fa-eye"></i> ${dragon.eyeType.name}
+            </div>
+            <div class="url-box">${url}</div>
+            <button class="copy-btn">Copy URL</button>
+        `;
+        
+        container.appendChild(egg);
+    });
+    
+    // Set up copy buttons for the new offspring
+    setupOffspringCopyButtons();
+}
+
 // =========================
 // EVENT HANDLERS
 // =========================
