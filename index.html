@@ -2633,8 +2633,16 @@ function updateGeneDropdowns(parentNum) {
     try {
         const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
         
-        // Update primary gene dropdown
+        // Get currently selected values BEFORE clearing
         const primarySelect = document.getElementById(`parent${parentNum}-primary-gene`);
+        const secondarySelect = document.getElementById(`parent${parentNum}-secondary-gene`);
+        const tertiarySelect = document.getElementById(`parent${parentNum}-tertiary-gene`);
+        
+        const currentPrimary = primarySelect.value;
+        const currentSecondary = secondarySelect.value;
+        const currentTertiary = tertiarySelect.value;
+        
+        // Update primary gene dropdown
         primarySelect.innerHTML = '';
         const compatiblePrimary = filterGenesForBreed(data.primaryGenes, breedId);
         compatiblePrimary.forEach(gene => {
@@ -2645,7 +2653,6 @@ function updateGeneDropdowns(parentNum) {
         });
         
         // Update secondary gene dropdown
-        const secondarySelect = document.getElementById(`parent${parentNum}-secondary-gene`);
         secondarySelect.innerHTML = '';
         const compatibleSecondary = filterGenesForBreed(data.secondaryGenes, breedId);
         compatibleSecondary.forEach(gene => {
@@ -2656,7 +2663,6 @@ function updateGeneDropdowns(parentNum) {
         });
         
         // Update tertiary gene dropdown
-        const tertiarySelect = document.getElementById(`parent${parentNum}-tertiary-gene`);
         tertiarySelect.innerHTML = '';
         const compatibleTertiary = filterGenesForBreed(data.tertiaryGenes, breedId);
         compatibleTertiary.forEach(gene => {
@@ -2665,6 +2671,26 @@ function updateGeneDropdowns(parentNum) {
             option.textContent = `${gene.name}`;
             tertiarySelect.appendChild(option);
         });
+        
+        // Try to restore previous selections if they're still compatible
+        if (compatiblePrimary.some(g => g.id.toString() === currentPrimary)) {
+            primarySelect.value = currentPrimary;
+        } else if (compatiblePrimary.length > 0) {
+            // Select first available gene if previous selection is incompatible
+            primarySelect.value = compatiblePrimary[0].id;
+        }
+        
+        if (compatibleSecondary.some(g => g.id.toString() === currentSecondary)) {
+            secondarySelect.value = currentSecondary;
+        } else if (compatibleSecondary.length > 0) {
+            secondarySelect.value = compatibleSecondary[0].id;
+        }
+        
+        if (compatibleTertiary.some(g => g.id.toString() === currentTertiary)) {
+            tertiarySelect.value = currentTertiary;
+        } else if (compatibleTertiary.length > 0) {
+            tertiarySelect.value = compatibleTertiary[0].id;
+        }
         
     } catch (error) {
         console.error(`Error updating gene dropdowns for parent ${parentNum}:`, error);
@@ -2905,18 +2931,22 @@ if (breedBtn) {
     });
 }
         
-        // Breed change listeners
-        document.querySelectorAll('select[id$="-breed"]').forEach(select => {
-            select.addEventListener('change', function() {
-                const parentNum = this.id.includes('parent1') ? 1 : 2;
-                updateGeneDropdowns(parentNum);
-                const dragon = getDragonFromForm(parentNum);
-                updateDragonDisplay(dragon, parentNum);
-                
-                // Clear any error messages when breed changes
-                clearOffspringContainer();
-            });
-        });
+// Breed change listeners
+document.querySelectorAll('select[id$="-breed"]').forEach(select => {
+    select.addEventListener('change', function() {
+        const parentNum = this.id.includes('parent1') ? 1 : 2;
+        updateGeneDropdowns(parentNum); // This now preserves compatible selections
+        
+        // Only update display after a brief delay to allow dropdowns to update
+        setTimeout(() => {
+            const dragon = getDragonFromForm(parentNum);
+            updateDragonDisplay(dragon, parentNum);
+        }, 100);
+        
+        // Clear any error messages when breed changes
+        clearOffspringContainer();
+    });
+});
         
         // General change listeners (for other dropdowns)
         document.querySelectorAll('select:not([id$="-breed"])').forEach(select => {
