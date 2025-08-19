@@ -589,40 +589,56 @@
     </div>
 
     <script>
-        // =========================
-        // DATA STRUCTURES
-        // =========================
-        const data = {
-            breeds: [
-                {id: 20, name: "Aberration", rarity: "Ancient"},
-                {id: 22, name: "Aether", rarity: "Ancient"},
-                {id: 24, name: "Auraboa", rarity: "Ancient"},
-                {id: 18, name: "Banescale", rarity: "Ancient"},
-                {id: 14, name: "Bogsneak", rarity: "Uncommon"},
-                {id: 27, name: "Cirrus", rarity: "Ancient"},
-                {id: 12, name: "Coatl", rarity: "Rare"},
-                {id: 25, name: "Dusthide", rarity: "Ancient"},
-                {id: 26, name: "Everlux", rarity: "Ancient"},
-                {id: 1, name: "Fae", rarity: "Plentiful"},
-                {id: 16, name: "Fathom", rarity: "Uncommon"},
-                {id: 17, name: "Gaoler", rarity: "Ancient"},
-                {id: 2, name: "Guardian", rarity: "Plentiful"},
-                {id: 8, name: "Imperial", rarity: "Limited"},
-                {id: 3, name: "Mirror", rarity: "Plentiful"},
-                {id: 11, name: "Nocturne", rarity: "Limited"},
-                {id: 15, name: "Obelisk", rarity: "Uncommon"},
-                {id: 4, name: "Pearlcatcher", rarity: "Common"},
-                {id: 5, name: "Ridgeback", rarity: "Common"},
-                {id: 23, name: "Sandsurge", rarity: "Ancient"},
-                {id: 13, name: "Skydancer", rarity: "Uncommon"},
-                {id: 9, name: "Snapper", rarity: "Common"},
-                {id: 7, name: "Spiral", rarity: "Common"},
-                {id: 6, name: "Tundra", rarity: "Plentiful"},
-                {id: 21, name: "Undertide", rarity: "Ancient"},
-                {id: 19, name: "Veilspun", rarity: "Ancient"},
-                {id: 10, name: "Wildclaw", rarity: "Rare"}
-            ],
-            
+// =========================
+// DEBUGGING UTILITIES
+// =========================
+function debugLog(message) {
+    console.log('[DEBUG]', message);
+}
+
+function checkElementExists(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.error('Element not found:', id);
+        return false;
+    }
+    return true;
+}
+
+// =========================
+// DATA STRUCTURES (Preserving your original structure)
+// =========================
+const data = {
+    breeds: [
+        {id: 20, name: "Aberration", rarity: "Ancient"},
+        {id: 22, name: "Aether", rarity: "Ancient"},
+        {id: 24, name: "Auraboa", rarity: "Ancient"},
+        {id: 18, name: "Banescale", rarity: "Ancient"},
+        {id: 14, name: "Bogsneak", rarity: "Uncommon"},
+        {id: 27, name: "Cirrus", rarity: "Ancient"},
+        {id: 12, name: "Coatl", rarity: "Rare"},
+        {id: 25, name: "Dusthide", rarity: "Ancient"},
+        {id: 26, name: "Everlux", rarity: "Ancient"},
+        {id: 1, name: "Fae", rarity: "Plentiful"},
+        {id: 16, name: "Fathom", rarity: "Uncommon"},
+        {id: 17, name: "Gaoler", rarity: "Ancient"},
+        {id: 2, name: "Guardian", rarity: "Plentiful"},
+        {id: 8, name: "Imperial", rarity: "Limited"},
+        {id: 3, name: "Mirror", rarity: "Plentiful"},
+        {id: 11, name: "Nocturne", rarity: "Limited"},
+        {id: 15, name: "Obelisk", rarity: "Uncommon"},
+        {id: 4, name: "Pearlcatcher", rarity: "Common"},
+        {id: 5, name: "Ridgeback", rarity: "Common"},
+        {id: 23, name: "Sandsurge", rarity: "Ancient"},
+        {id: 13, name: "Skydancer", rarity: "Uncommon"},
+        {id: 9, name: "Snapper", rarity: "Common"},
+        {id: 7, name: "Spiral", rarity: "Common"},
+        {id: 6, name: "Tundra", rarity: "Plentiful"},
+        {id: 21, name: "Undertide", rarity: "Ancient"},
+        {id: 19, name: "Veilspun", rarity: "Ancient"},
+        {id: 10, name: "Wildclaw", rarity: "Rare"}
+    ],
+    
             colors: [
                 {id: 1, name: "maize", hex: "#FFFCE9", urlValue: 1},
                 {id: 2, name: "cream", hex: "#FFF0DD", urlValue: 163},
@@ -802,35 +818,35 @@
                 {id: 176, name: "rose", hex: "#FED7F6", urlValue: 67},
                 {id: 177, name: "pearl", hex: "#FBEDFA", urlValue: 85}
             ],
-            
-            eyeTypes: [
-                {id: 13, name: "Bright", probability: 2.2},
-                {id: 0, name: "Common", probability: 45.8},
-                {id: 4, name: "Faceted", probability: 0.7},
-                {id: 9, name: "Goat", probability: 1.1},
-                {id: 5, name: "Multi-Gaze", probability: 0.4},
-                {id: 12, name: "Pastel", probability: 2.1},
-                {id: 6, name: "Primal", probability: 0.5},
-                {id: 3, name: "Rare", probability: 9.1},
-                {id: 1, name: "Uncommon", probability: 24.2},
-                {id: 2, name: "Unusual", probability: 13.9}
-            ],
-            
-            breedOdds: {
-                "Plentiful": {"Common": 0.3, "Uncommon": 0.15, "Limited": 0.03, "Rare": 0.01},
-                "Common": {"Uncommon": 0.24, "Limited": 0.09, "Rare": 0.01},
-                "Uncommon": {"Limited": 0.13, "Rare": 0.02},
-                "Limited": {"Rare": 0.03}
-            },
-            
-            geneOdds: {
-                "Plentiful": {"Plentiful": 0.5, "Common": 0.7, "Uncommon": 0.85, "Limited": 0.97, "Rare": 0.99},
-                "Common": {"Plentiful": 0.3, "Common": 0.5, "Uncommon": 0.75, "Limited": 0.9, "Rare": 0.99},
-                "Uncommon": {"Plentiful": 0.15, "Common": 0.25, "Uncommon": 0.5, "Limited": 0.85, "Rare": 0.98},
-                "Limited": {"Plentiful": 0.03, "Common": 0.1, "Uncommon": 0.15, "Limited": 0.5, "Rare": 0.97},
-                "Rare": {"Plentiful": 0.01, "Common": 0.01, "Uncommon": 0.02, "Limited": 0.03, "Rare": 0.5}
-            },
-            
+    
+    eyeTypes: [
+        {id: 13, name: "Bright", probability: 2.2},
+        {id: 0, name: "Common", probability: 45.8},
+        {id: 4, name: "Faceted", probability: 0.7},
+        {id: 9, name: "Goat", probability: 1.1},
+        {id: 5, name: "Multi-Gaze", probability: 0.4},
+        {id: 12, name: "Pastel", probability: 2.1},
+        {id: 6, name: "Primal", probability: 0.5},
+        {id: 3, name: "Rare", probability: 9.1},
+        {id: 1, name: "Uncommon", probability: 24.2},
+        {id: 2, name: "Unusual", probability: 13.9}
+    ],
+    
+    breedOdds: {
+        "Plentiful": {"Common": 0.3, "Uncommon": 0.15, "Limited": 0.03, "Rare": 0.01},
+        "Common": {"Uncommon": 0.24, "Limited": 0.09, "Rare": 0.01},
+        "Uncommon": {"Limited": 0.13, "Rare": 0.02},
+        "Limited": {"Rare": 0.03}
+    },
+    
+    geneOdds: {
+        "Plentiful": {"Plentiful": 0.5, "Common": 0.7, "Uncommon": 0.85, "Limited": 0.97, "Rare": 0.99},
+        "Common": {"Plentiful": 0.3, "Common": 0.5, "Uncommon": 0.75, "Limited": 0.9, "Rare": 0.99},
+        "Uncommon": {"Plentiful": 0.15, "Common": 0.25, "Uncommon": 0.5, "Limited": 0.85, "Rare": 0.98},
+        "Limited": {"Plentiful": 0.03, "Common": 0.1, "Uncommon": 0.15, "Limited": 0.5, "Rare": 0.97},
+        "Rare": {"Plentiful": 0.01, "Common": 0.01, "Uncommon": 0.02, "Limited": 0.03, "Rare": 0.5}
+    },
+    
 // Primary genes with IDs and breed restrictions
 primaryGenes: [
     // Universal genes (available to all breeds)
@@ -1418,7 +1434,7 @@ primaryGenes: [
     {id: 427, name: "Trickmurk", rarity: "Rare", forBreed: [19]},
     {id: 453, name: "Varnish", rarity: "Common", forBreed: [19]}
 ],
-            
+    
 // Secondary genes with IDs and breed restrictions
 secondaryGenes: [
     // Universal genes (available to all breeds)
@@ -1796,7 +1812,7 @@ secondaryGenes: [
     {id: 423, name: "Eclipse", rarity: "Rare", forBreed: [19]},
     {id: 453, name: "Lacquer", rarity: "Common", forBreed: [19]}
 ],
-            
+    
 // Tertiary genes with IDs and breed restrictions
 tertiaryGenes: [
     // Universal genes (available to all breeds)
@@ -2300,36 +2316,55 @@ tertiaryGenes: [
     {id: 427, name: "Trickmurk", rarity: "Rare", forBreed: [19]},
     {id: 453, name: "Varnish", rarity: "Common", forBreed: [19]}
 ]
-        };
+};
 
-        // =========================
-        // UTILITY FUNCTIONS
-        // =========================
-        function getRandomElement(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
+// =========================
+// UTILITY FUNCTIONS (Preserving your originals)
+// =========================
+function getRandomElement(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
 
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-        function getRarityRank(rarity) {
-            const ranks = ["Plentiful", "Common", "Uncommon", "Limited", "Rare"];
-            return ranks.indexOf(rarity);
-        }
+function getRarityRank(rarity) {
+    const ranks = ["Plentiful", "Common", "Uncommon", "Limited", "Rare"];
+    return ranks.indexOf(rarity);
+}
 
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                const button = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = 'Copy URL';
-                }, 2000);
-            });
-        }
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const button = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 2000);
+    });
+}
 
-// Filter genes by breed compatibility
+// Add to your copyToClipboard function or create a new one
+function setupOffspringCopyButtons() {
+    // This will be called after offspring are displayed
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const urlBox = this.previousElementSibling;
+            if (urlBox && urlBox.classList.contains('url-box')) {
+                navigator.clipboard.writeText(urlBox.textContent).then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Copied!';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        });
+    });
+}
+
 function filterGenesForBreed(genes, breedId) {
     return genes.filter(gene => 
         gene.forBreed === null || 
@@ -2338,408 +2373,456 @@ function filterGenesForBreed(genes, breedId) {
     );
 }
 
-        // Get a random gene that's compatible with the breed
-        function getRandomGeneForBreed(genes, breedId) {
-            const compatibleGenes = filterGenesForBreed(genes, breedId);
-            return getRandomElement(compatibleGenes);
-        }
+function getRandomGeneForBreed(genes, breedId) {
+    const compatibleGenes = filterGenesForBreed(genes, breedId);
+    return getRandomElement(compatibleGenes);
+}
 
-        // =========================
-        // CORE FUNCTIONS
-        // =========================
-        function generateRandomDragon() {
-            const breed = getRandomElement(data.breeds);
-            const gender = Math.random() < 0.5 ? 0 : 1; // 0 = male, 1 = female
-            
-            // Get random genes based on breed compatibility
-            const primaryGene = getRandomGeneForBreed(data.primaryGenes, breed.id);
-            const secondaryGene = getRandomGeneForBreed(data.secondaryGenes, breed.id);
-            const tertiaryGene = getRandomGeneForBreed(data.tertiaryGenes, breed.id);
-            
-            // Get random colors
-            const primaryColor = getRandomElement(data.colors);
-            const secondaryColor = getRandomElement(data.colors);
-            const tertiaryColor = getRandomElement(data.colors);
-            
-            // Get random eye type based on probability
-            const eyeType = getRandomElement(data.eyeTypes);
-            
-            return {
-                breed,
-                gender,
-                primaryGene,
-                secondaryGene,
-                tertiaryGene,
-                primaryColor,
-                secondaryColor,
-                tertiaryColor,
-                eyeType
-            };
-        }
+// =========================
+// CORE FUNCTIONS (Preserving your originals)
+// =========================
+function generateRandomDragon() {
+    debugLog('Generating random dragon');
+    const breed = getRandomElement(data.breeds);
+    const gender = Math.random() < 0.5 ? 0 : 1;
+    
+    const primaryGene = getRandomGeneForBreed(data.primaryGenes, breed.id);
+    const secondaryGene = getRandomGeneForBreed(data.secondaryGenes, breed.id);
+    const tertiaryGene = getRandomGeneForBreed(data.tertiaryGenes, breed.id);
+    
+    const primaryColor = getRandomElement(data.colors);
+    const secondaryColor = getRandomElement(data.colors);
+    const tertiaryColor = getRandomElement(data.colors);
+    
+    const eyeType = getRandomElement(data.eyeTypes);
+    
+    return {
+        breed,
+        gender,
+        primaryGene,
+        secondaryGene,
+        tertiaryGene,
+        primaryColor,
+        secondaryColor,
+        tertiaryColor,
+        eyeType
+    };
+}
 
-        function breedDragons(parent1, parent2) {
-            const offspring = [];
-            
-            // Generate 5 offspring
-            for (let i = 0; i < 5; i++) {
-                // Determine breed
-                let breed;
-                if (parent1.breed.id === parent2.breed.id) {
-                    breed = parent1.breed;
-                } else if (parent1.breed.rarity === "Ancient" || parent2.breed.rarity === "Ancient") {
-                    // Ancient breeds can only breed with the same breed
-                    breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
-                } else {
-                    const rarity1 = parent1.breed.rarity;
-                    const rarity2 = parent2.breed.rarity;
-                    
-                    if (rarity1 === rarity2) {
-                        breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
-                    } else {
-                        const rank1 = getRarityRank(rarity1);
-                        const rank2 = getRarityRank(rarity2);
-                        const rarer = rank1 > rank2 ? parent1.breed : parent2.breed;
-                        const lessRare = rank1 > rank2 ? parent2.breed : parent1.breed;
-                        
-                        const odds = data.breedOdds[lessRare.rarity][rarer.rarity] || 0.5;
-                        breed = Math.random() < odds ? rarer : lessRare;
-                    }
-                }
-                
-                // Determine gender (50/50)
-                const gender = Math.random() < 0.5 ? 0 : 1;
-                
-                // Determine genes (respecting breed compatibility)
-                const primaryGene = determineGene(parent1.primaryGene, parent2.primaryGene, "primary");
-                const secondaryGene = determineGene(parent1.secondaryGene, parent2.secondaryGene, "secondary");
-                const tertiaryGene = determineGene(parent1.tertiaryGene, parent2.tertiaryGene, "tertiary");
-                
-                // Ensure genes are compatible with the offspring breed
-                const compatiblePrimaryGenes = filterGenesForBreed(data.primaryGenes, breed.id);
-                const compatibleSecondaryGenes = filterGenesForBreed(data.secondaryGenes, breed.id);
-                const compatibleTertiaryGenes = filterGenesForBreed(data.tertiaryGenes, breed.id);
-                
-                // If selected gene isn't compatible, choose a random compatible one
-                if (!compatiblePrimaryGenes.some(g => g.id === primaryGene.id)) {
-                    primaryGene = getRandomElement(compatiblePrimaryGenes);
-                }
-                if (!compatibleSecondaryGenes.some(g => g.id === secondaryGene.id)) {
-                    secondaryGene = getRandomElement(compatibleSecondaryGenes);
-                }
-                if (!compatibleTertiaryGenes.some(g => g.id === tertiaryGene.id)) {
-                    tertiaryGene = getRandomElement(compatibleTertiaryGenes);
-                }
-                
-                // Determine colors
-                const primaryColor = determineColor(parent1.primaryColor, parent2.primaryColor);
-                const secondaryColor = determineColor(parent1.secondaryColor, parent2.secondaryColor);
-                const tertiaryColor = determineColor(parent1.tertiaryColor, parent2.tertiaryColor);
-                
-                // Determine eye type based on probability
-                const eyeType = getRandomElement(data.eyeTypes);
-                
-                offspring.push({
-                    breed,
-                    gender,
-                    primaryGene,
-                    secondaryGene,
-                    tertiaryGene,
-                    primaryColor,
-                    secondaryColor,
-                    tertiaryColor,
-                    eyeType
-                });
-            }
-            
-            return offspring;
-        }
+function determineGene(gene1, gene2, slot) {
+    if (gene1.id === gene2.id) {
+        return gene1;
+    }
+    
+    const rarity1 = gene1.rarity;
+    const rarity2 = gene2.rarity;
+    
+    let odds;
+    if (rarity1 === rarity2) {
+        odds = 0.5;
+    } else {
+        odds = data.geneOdds[rarity1][rarity2] || 0.5;
+    }
+    
+    return Math.random() < odds ? gene1 : gene2;
+}
 
-        function determineGene(gene1, gene2, slot) {
-            if (gene1.id === gene2.id) {
-                return gene1;
-            }
-            
-            // Get the odds based on rarities
-            const rarity1 = gene1.rarity;
-            const rarity2 = gene2.rarity;
-            
-            let odds;
-            if (rarity1 === rarity2) {
-                odds = 0.5;
-            } else {
-                odds = data.geneOdds[rarity1][rarity2] || 0.5;
-            }
-            
-            return Math.random() < odds ? gene1 : gene2;
-        }
+function determineColor(color1, color2) {
+    const minId = Math.min(color1.id, color2.id);
+    const maxId = Math.max(color1.id, color2.id);
+    const randomId = getRandomInt(minId, maxId);
+    return data.colors.find(color => color.id === randomId) || color1;
+}
 
-        function determineColor(color1, color2) {
-            // Get the min and max color IDs
-            const minId = Math.min(color1.id, color2.id);
-            const maxId = Math.max(color1.id, color2.id);
-            
-            // Pick a random color ID between min and max
-            const randomId = getRandomInt(minId, maxId);
-            
-            // Find the color object
-            return data.colors.find(color => color.id === randomId) || color1;
-        }
+function generateScryingUrl(dragon) {
+    return `https://www1.flightrising.com/scrying/predict?` +
+        `breed=${dragon.breed.id}&` +
+        `gender=${dragon.gender}&` +
+        `age=0&` +
+        `bodygene=${dragon.primaryGene.id}&` +
+        `body=${dragon.primaryColor.urlValue}&` +
+        `winggene=${dragon.secondaryGene.id}&` +
+        `wings=${dragon.secondaryColor.urlValue}&` +
+        `tertgene=${dragon.tertiaryGene.id}&` +
+        `tert=${dragon.tertiaryColor.urlValue}&` +
+        `element=1&` +
+        `eyetype=${dragon.eyeType.id}`;
+}
 
-        function generateScryingUrl(dragon) {
-            return `https://www1.flightrising.com/scrying/predict?` +
-                `breed=${dragon.breed.id}&` +
-                `gender=${dragon.gender}&` +
-                `age=0&` +
-                `bodygene=${dragon.primaryGene.id}&` +
-                `body=${dragon.primaryColor.urlValue}&` +  // Use urlValue instead of id
-                `winggene=${dragon.secondaryGene.id}&` +
-                `wings=${dragon.secondaryColor.urlValue}&` +  // Use urlValue instead of id
-                `tertgene=${dragon.tertiaryGene.id}&` +
-                `tert=${dragon.tertiaryColor.urlValue}&` +  // Use urlValue instead of id
-                `element=1&` +
-                `eyetype=${dragon.eyeType.id}`;
-        }
-
-        // =========================
-        // UI FUNCTIONS
-        // =========================
-        function populateDropdowns() {
-            // Populate breed dropdowns
-            const breedSelects = document.querySelectorAll('select[id$="-breed"]');
-            breedSelects.forEach(select => {
-                data.breeds.forEach(breed => {
-                    const option = document.createElement('option');
-                    option.value = breed.id;
-                    option.textContent = breed.name;
-                    select.appendChild(option);
-                });
-            });
-            
-            // Populate color dropdowns
-            const colorSelects = document.querySelectorAll('select[id$="color-select"]');
-            colorSelects.forEach(select => {
-                data.colors.forEach(color => {
-                    const option = document.createElement('option');
-                    option.value = color.id;
-                    option.textContent = `${color.name} (${color.id})`;
-                    option.style.backgroundColor = color.hex;
-                    select.appendChild(option);
-                });
-            });
-            
-            // Populate gene dropdowns based on initial breed selection
-            updateGeneDropdowns(1);
-            updateGeneDropdowns(2);
-            
-            // Event listener for breed changes to update gene dropdowns
-            document.querySelectorAll('select[id$="-breed"]').forEach(select => {
-                select.addEventListener('change', function() {
-                    const parentNum = this.id.includes('parent1') ? 1 : 2;
-                    updateGeneDropdowns(parentNum);
-                    // Also update the dragon display when breed changes
-                    const dragon = getDragonFromForm(parentNum);
-                    updateDragonDisplay(dragon, parentNum);
-                });
-            });
-        }
-
-        function updateGeneDropdowns(parentNum) {
-            const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
-            
-            // Update primary gene dropdown
-            const primarySelect = document.getElementById(`parent${parentNum}-primary-gene`);
-            primarySelect.innerHTML = '';
-            const compatiblePrimary = filterGenesForBreed(data.primaryGenes, breedId);
-            compatiblePrimary.forEach(gene => {
+// =========================
+// UI FUNCTIONS (Preserving your originals with debugging)
+// =========================
+function populateDropdowns() {
+    debugLog('Populating dropdowns');
+    
+    try {
+        // Populate breed dropdowns
+        const breedSelects = document.querySelectorAll('select[id$="-breed"]');
+        breedSelects.forEach(select => {
+            data.breeds.forEach(breed => {
                 const option = document.createElement('option');
-                option.value = gene.id;
-                option.textContent = `${gene.name} (${gene.id})`;
-                primarySelect.appendChild(option);
-            });
-            
-            // Update secondary gene dropdown
-            const secondarySelect = document.getElementById(`parent${parentNum}-secondary-gene`);
-            secondarySelect.innerHTML = '';
-            const compatibleSecondary = filterGenesForBreed(data.secondaryGenes, breedId);
-            compatibleSecondary.forEach(gene => {
-                const option = document.createElement('option');
-                option.value = gene.id;
-                option.textContent = `${gene.name} (${gene.id})`;
-                secondarySelect.appendChild(option);
-            });
-            
-            // Update tertiary gene dropdown
-            const tertiarySelect = document.getElementById(`parent${parentNum}-tertiary-gene`);
-            tertiarySelect.innerHTML = '';
-            const compatibleTertiary = filterGenesForBreed(data.tertiaryGenes, breedId);
-            compatibleTertiary.forEach(gene => {
-                const option = document.createElement('option');
-                option.value = gene.id;
-                option.textContent = `${gene.name} (${gene.id})`;
-                tertiarySelect.appendChild(option);
-            });
-        }
-
-        function updateDragonDisplay(dragon, parentNum) {
-            // Update breed
-            document.getElementById(`parent${parentNum}-breed`).value = dragon.breed.id;
-            
-            // Update gene dropdowns based on breed
-            updateGeneDropdowns(parentNum);
-            
-            // Update genes
-            document.getElementById(`parent${parentNum}-primary-gene`).value = dragon.primaryGene.id;
-            document.getElementById(`parent${parentNum}-secondary-gene`).value = dragon.secondaryGene.id;
-            document.getElementById(`parent${parentNum}-tertiary-gene`).value = dragon.tertiaryGene.id;
-            
-            // Update colors
-            document.getElementById(`parent${parentNum}-primary-color-select`).value = dragon.primaryColor.id;
-            document.getElementById(`parent${parentNum}-secondary-color-select`).value = dragon.secondaryColor.id;
-            document.getElementById(`parent${parentNum}-tertiary-color-select`).value = dragon.tertiaryColor.id;
-            
-            // Update gender
-            document.getElementById(`parent${parentNum}-gender`).value = dragon.gender;
-            
-            // Update visual display
-            document.getElementById(`parent${parentNum}-primary-color`).style.backgroundColor = dragon.primaryColor.hex;
-            document.getElementById(`parent${parentNum}-secondary-color`).style.backgroundColor = dragon.secondaryColor.hex;
-            document.getElementById(`parent${parentNum}-tertiary-color`).style.backgroundColor = dragon.tertiaryColor.hex;
-            
-            document.getElementById(`parent${parentNum}-primary-text`).textContent = 
-                `${dragon.primaryGene.name} - ${dragon.primaryColor.name}`;
-            document.getElementById(`parent${parentNum}-secondary-text`).textContent = 
-                `${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}`;
-            document.getElementById(`parent${parentNum}-tertiary-text`).textContent = 
-                `${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}`;
-            
-            // Update scrying URL
-            const url = generateScryingUrl(dragon);
-            document.getElementById(`parent${parentNum}-url`).textContent = url;
-        }
-
-        function displayOffspring(offspring) {
-            const container = document.getElementById('offspring-container');
-            container.innerHTML = '';
-            
-            offspring.forEach((dragon, index) => {
-                const egg = document.createElement('div');
-                egg.className = 'egg-card';
-                
-                const url = generateScryingUrl(dragon);
-                
-                egg.innerHTML = `
-                    <div class="egg-number">${index + 1}</div>
-                    <div class="egg-dragon">${dragon.breed.name}</div>
-                    <div class="egg-trait">
-                        <div class="egg-color" style="background-color: ${dragon.primaryColor.hex};"></div>
-                        ${dragon.primaryGene.name} - ${dragon.primaryColor.name}
-                    </div>
-                    <div class="egg-trait">
-                        <div class="egg-color" style="background-color: ${dragon.secondaryColor.hex};"></div>
-                        ${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}
-                    </div>
-                    <div class="egg-trait">
-                        <div class="egg-color" style="background-color: ${dragon.tertiaryColor.hex};"></div>
-                        ${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}
-                    </div>
-                    <div class="egg-trait">
-                        <i class="fas fa-eye"></i> ${dragon.eyeType.name}
-                    </div>
-                    <div class="url-box">${url}</div>
-                    <button class="copy-btn" onclick="copyToClipboard('offspring-${index}-url')">Copy URL</button>
-                `;
-                
-                container.appendChild(egg);
-            });
-        }
-
-        function getDragonFromForm(parentNum) {
-            const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
-            const primaryGeneId = parseInt(document.getElementById(`parent${parentNum}-primary-gene`).value);
-            const secondaryGeneId = parseInt(document.getElementById(`parent${parentNum}-secondary-gene`).value);
-            const tertiaryGeneId = parseInt(document.getElementById(`parent${parentNum}-tertiary-gene`).value);
-            const primaryColorId = parseInt(document.getElementById(`parent${parentNum}-primary-color-select`).value);
-            const secondaryColorId = parseInt(document.getElementById(`parent${parentNum}-secondary-color-select`).value);
-            const tertiaryColorId = parseInt(document.getElementById(`parent${parentNum}-tertiary-color-select`).value);
-            const gender = parseInt(document.getElementById(`parent${parentNum}-gender`).value);
-            
-            // Find the selected breed
-            const breed = data.breeds.find(b => b.id === breedId);
-            
-            // Find the selected genes (ensuring they're compatible with the breed)
-            const primaryGene = data.primaryGenes.find(g => g.id === primaryGeneId);
-            const secondaryGene = data.secondaryGenes.find(g => g.id === secondaryGeneId);
-            const tertiaryGene = data.tertiaryGenes.find(g => g.id === tertiaryGeneId);
-            
-            // Find the selected colors
-            const primaryColor = data.colors.find(c => c.id === primaryColorId);
-            const secondaryColor = data.colors.find(c => c.id === secondaryColorId);
-            const tertiaryColor = data.colors.find(c => c.id === tertiaryColorId);
-            
-            return {
-                breed,
-                primaryGene,
-                secondaryGene,
-                tertiaryGene,
-                primaryColor,
-                secondaryColor,
-                tertiaryColor,
-                gender,
-                eyeType: getRandomElement(data.eyeTypes) // Will be recalculated during breeding
-            };
-        }
-
-        // =========================
-        // INITIALIZATION
-        // =========================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Populate dropdowns
-            populateDropdowns();
-            
-            // Generate initial random parents
-            const parent1 = generateRandomDragon();
-            const parent2 = generateRandomDragon();
-            
-            updateDragonDisplay(parent1, 1);
-            updateDragonDisplay(parent2, 2);
-            
-            // Event listeners
-            document.getElementById('randomize-all').addEventListener('click', () => {
-                const parent1 = generateRandomDragon();
-                const parent2 = generateRandomDragon();
-                
-                updateDragonDisplay(parent1, 1);
-                updateDragonDisplay(parent2, 2);
-            });
-            
-            document.getElementById('randomize-parent1').addEventListener('click', () => {
-                const parent1 = generateRandomDragon();
-                updateDragonDisplay(parent1, 1);
-            });
-            
-            document.getElementById('randomize-parent2').addEventListener('click', () => {
-                const parent2 = generateRandomDragon();
-                updateDragonDisplay(parent2, 2);
-            });
-            
-            document.getElementById('breed-btn').addEventListener('click', () => {
-                const parent1 = getDragonFromForm(1);
-                const parent2 = getDragonFromForm(2);
-                
-                // Generate offspring
-                const offspring = breedDragons(parent1, parent2);
-                displayOffspring(offspring);
-            });
-            
-            // Update visual display when dropdowns change
-            document.querySelectorAll('select').forEach(select => {
-                select.addEventListener('change', function() {
-                    const parentNum = this.id.includes('parent1') ? 1 : 2;
-                    const dragon = getDragonFromForm(parentNum);
-                    updateDragonDisplay(dragon, parentNum);
-                });
+                option.value = breed.id;
+                option.textContent = breed.name;
+                select.appendChild(option);
             });
         });
+        
+        // Populate color dropdowns
+        const colorSelects = document.querySelectorAll('select[id$="color-select"]');
+        colorSelects.forEach(select => {
+            data.colors.forEach(color => {
+                const option = document.createElement('option');
+                option.value = color.id;
+                option.textContent = `${color.name} (${color.id})`;
+                option.style.backgroundColor = color.hex;
+                select.appendChild(option);
+            });
+        });
+        
+        // Populate gene dropdowns based on initial breed selection
+        updateGeneDropdowns(1);
+        updateGeneDropdowns(2);
+        
+    } catch (error) {
+        console.error('Error in populateDropdowns:', error);
+    }
+}
+
+function updateGeneDropdowns(parentNum) {
+    try {
+        const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
+        
+        // Update primary gene dropdown
+        const primarySelect = document.getElementById(`parent${parentNum}-primary-gene`);
+        primarySelect.innerHTML = '';
+        const compatiblePrimary = filterGenesForBreed(data.primaryGenes, breedId);
+        compatiblePrimary.forEach(gene => {
+            const option = document.createElement('option');
+            option.value = gene.id;
+            option.textContent = `${gene.name} (${gene.id})`;
+            primarySelect.appendChild(option);
+        });
+        
+        // Update secondary gene dropdown
+        const secondarySelect = document.getElementById(`parent${parentNum}-secondary-gene`);
+        secondarySelect.innerHTML = '';
+        const compatibleSecondary = filterGenesForBreed(data.secondaryGenes, breedId);
+        compatibleSecondary.forEach(gene => {
+            const option = document.createElement('option');
+            option.value = gene.id;
+            option.textContent = `${gene.name} (${gene.id})`;
+            secondarySelect.appendChild(option);
+        });
+        
+        // Update tertiary gene dropdown
+        const tertiarySelect = document.getElementById(`parent${parentNum}-tertiary-gene`);
+        tertiarySelect.innerHTML = '';
+        const compatibleTertiary = filterGenesForBreed(data.tertiaryGenes, breedId);
+        compatibleTertiary.forEach(gene => {
+            const option = document.createElement('option');
+            option.value = gene.id;
+            option.textContent = `${gene.name} (${gene.id})`;
+            tertiarySelect.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error(`Error updating gene dropdowns for parent ${parentNum}:`, error);
+    }
+}
+
+function updateDragonDisplay(dragon, parentNum) {
+    debugLog(`Updating dragon display for parent ${parentNum}`);
+    
+    try {
+        // Update breed
+        document.getElementById(`parent${parentNum}-breed`).value = dragon.breed.id;
+        
+        // Update gene dropdowns based on breed
+        updateGeneDropdowns(parentNum);
+        
+        // Update genes
+        document.getElementById(`parent${parentNum}-primary-gene`).value = dragon.primaryGene.id;
+        document.getElementById(`parent${parentNum}-secondary-gene`).value = dragon.secondaryGene.id;
+        document.getElementById(`parent${parentNum}-tertiary-gene`).value = dragon.tertiaryGene.id;
+        
+        // Update colors
+        document.getElementById(`parent${parentNum}-primary-color-select`).value = dragon.primaryColor.id;
+        document.getElementById(`parent${parentNum}-secondary-color-select`).value = dragon.secondaryColor.id;
+        document.getElementById(`parent${parentNum}-tertiary-color-select`).value = dragon.tertiaryColor.id;
+        
+        // Update gender
+        document.getElementById(`parent${parentNum}-gender`).value = dragon.gender;
+        
+        // Update visual display
+        document.getElementById(`parent${parentNum}-primary-color`).style.backgroundColor = dragon.primaryColor.hex;
+        document.getElementById(`parent${parentNum}-secondary-color`).style.backgroundColor = dragon.secondaryColor.hex;
+        document.getElementById(`parent${parentNum}-tertiary-color`).style.backgroundColor = dragon.tertiaryColor.hex;
+        
+        document.getElementById(`parent${parentNum}-primary-text`).textContent = 
+            `${dragon.primaryGene.name} - ${dragon.primaryColor.name}`;
+        document.getElementById(`parent${parentNum}-secondary-text`).textContent = 
+            `${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}`;
+        document.getElementById(`parent${parentNum}-tertiary-text`).textContent = 
+            `${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}`;
+        
+        // Update scrying URL
+        const url = generateScryingUrl(dragon);
+        document.getElementById(`parent${parentNum}-url`).textContent = url;
+        
+    } catch (error) {
+        console.error(`Error updating dragon ${parentNum}:`, error);
+    }
+}
+
+function getDragonFromForm(parentNum) {
+    const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
+    const primaryGeneId = parseInt(document.getElementById(`parent${parentNum}-primary-gene`).value);
+    const secondaryGeneId = parseInt(document.getElementById(`parent${parentNum}-secondary-gene`).value);
+    const tertiaryGeneId = parseInt(document.getElementById(`parent${parentNum}-tertiary-gene`).value);
+    const primaryColorId = parseInt(document.getElementById(`parent${parentNum}-primary-color-select`).value);
+    const secondaryColorId = parseInt(document.getElementById(`parent${parentNum}-secondary-color-select`).value);
+    const tertiaryColorId = parseInt(document.getElementById(`parent${parentNum}-tertiary-color-select`).value);
+    const gender = parseInt(document.getElementById(`parent${parentNum}-gender`).value);
+    
+    const breed = data.breeds.find(b => b.id === breedId);
+    const primaryGene = data.primaryGenes.find(g => g.id === primaryGeneId);
+    const secondaryGene = data.secondaryGenes.find(g => g.id === secondaryGeneId);
+    const tertiaryGene = data.tertiaryGenes.find(g => g.id === tertiaryGeneId);
+    const primaryColor = data.colors.find(c => c.id === primaryColorId);
+    const secondaryColor = data.colors.find(c => c.id === secondaryColorId);
+    const tertiaryColor = data.colors.find(c => c.id === tertiaryColorId);
+    
+    return {
+        breed,
+        primaryGene,
+        secondaryGene,
+        tertiaryGene,
+        primaryColor,
+        secondaryColor,
+        tertiaryColor,
+        gender,
+        eyeType: getRandomElement(data.eyeTypes)
+    };
+}
+
+// =========================
+// EVENT HANDLERS
+// =========================
+function setupEventListeners() {
+    debugLog('Setting up event listeners');
+    
+    try {
+        // Randomize buttons
+        document.getElementById('randomize-all').addEventListener('click', () => {
+            debugLog('Randomize all clicked');
+            const parent1 = generateRandomDragon();
+            const parent2 = generateRandomDragon();
+            updateDragonDisplay(parent1, 1);
+            updateDragonDisplay(parent2, 2);
+        });
+        
+        document.getElementById('randomize-parent1').addEventListener('click', () => {
+            debugLog('Randomize parent 1 clicked');
+            const parent1 = generateRandomDragon();
+            updateDragonDisplay(parent1, 1);
+        });
+        
+        document.getElementById('randomize-parent2').addEventListener('click', () => {
+            debugLog('Randomize parent 2 clicked');
+            const parent2 = generateRandomDragon();
+            updateDragonDisplay(parent2, 2);
+        });
+        
+// Breed button
+document.getElementById('breed-btn').addEventListener('click', () => {
+    debugLog('Breed button clicked');
+    try {
+        const parent1 = getDragonFromForm(1);
+        const parent2 = getDragonFromForm(2);
+        
+        // Generate offspring
+        const offspring = breedDragons(parent1, parent2);
+        displayOffspring(offspring);
+        
+    } catch (error) {
+        console.error('Error breeding dragons:', error);
+    }
+});
+    
+    // Generate 5 offspring
+    for (let i = 0; i < 5; i++) {
+        // Determine breed
+        let breed;
+        if (parent1.breed.id === parent2.breed.id) {
+            breed = parent1.breed;
+        } else if (parent1.breed.rarity === "Ancient" || parent2.breed.rarity === "Ancient") {
+            // Ancient breeds can only breed with the same breed
+            breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
+        } else {
+            const rarity1 = parent1.breed.rarity;
+            const rarity2 = parent2.breed.rarity;
+            
+            if (rarity1 === rarity2) {
+                breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
+            } else {
+                const rank1 = getRarityRank(rarity1);
+                const rank2 = getRarityRank(rarity2);
+                const rarer = rank1 > rank2 ? parent1.breed : parent2.breed;
+                const lessRare = rank1 > rank2 ? parent2.breed : parent1.breed;
+                
+                const odds = data.breedOdds[lessRare.rarity][rarer.rarity] || 0.5;
+                breed = Math.random() < odds ? rarer : lessRare;
+            }
+        }
+        
+        // Determine gender (50/50)
+        const gender = Math.random() < 0.5 ? 0 : 1;
+        
+        // Determine genes
+        const primaryGene = determineGene(parent1.primaryGene, parent2.primaryGene, "primary");
+        const secondaryGene = determineGene(parent1.secondaryGene, parent2.secondaryGene, "secondary");
+        const tertiaryGene = determineGene(parent1.tertiaryGene, parent2.tertiaryGene, "tertiary");
+        
+        // Ensure genes are compatible with the offspring breed
+        const compatiblePrimaryGenes = filterGenesForBreed(data.primaryGenes, breed.id);
+        const compatibleSecondaryGenes = filterGenesForBreed(data.secondaryGenes, breed.id);
+        const compatibleTertiaryGenes = filterGenesForBreed(data.tertiaryGenes, breed.id);
+        
+        // If selected gene isn't compatible, choose a random compatible one
+        let finalPrimaryGene = primaryGene;
+        let finalSecondaryGene = secondaryGene;
+        let finalTertiaryGene = tertiaryGene;
+        
+        if (!compatiblePrimaryGenes.some(g => g.id === primaryGene.id)) {
+            finalPrimaryGene = getRandomElement(compatiblePrimaryGenes);
+        }
+        if (!compatibleSecondaryGenes.some(g => g.id === secondaryGene.id)) {
+            finalSecondaryGene = getRandomElement(compatibleSecondaryGenes);
+        }
+        if (!compatibleTertiaryGenes.some(g => g.id === tertiaryGene.id)) {
+            finalTertiaryGene = getRandomElement(compatibleTertiaryGenes);
+        }
+        
+        // Determine colors
+        const primaryColor = determineColor(parent1.primaryColor, parent2.primaryColor);
+        const secondaryColor = determineColor(parent1.secondaryColor, parent2.secondaryColor);
+        const tertiaryColor = determineColor(parent1.tertiaryColor, parent2.tertiaryColor);
+        
+        // Determine eye type based on probability
+        const eyeType = getRandomElement(data.eyeTypes);
+        
+        offspring.push({
+            breed,
+            gender,
+            primaryGene: finalPrimaryGene,
+            secondaryGene: finalSecondaryGene,
+            tertiaryGene: finalTertiaryGene,
+            primaryColor,
+            secondaryColor,
+            tertiaryColor,
+            eyeType
+        });
+    }
+    
+    return offspring;
+}
+
+function displayOffspring(offspring) {
+    debugLog('Displaying offspring');
+    const container = document.getElementById('offspring-container');
+    
+    if (!container) {
+        console.error('Offspring container not found');
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    offspring.forEach((dragon, index) => {
+        const egg = document.createElement('div');
+        egg.className = 'egg-card';
+        
+        const url = generateScryingUrl(dragon);
+        
+        egg.innerHTML = `
+            <div class="egg-number">${index + 1}</div>
+            <div class="egg-dragon">${dragon.breed.name}</div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.primaryColor.hex};"></div>
+                ${dragon.primaryGene.name} - ${dragon.primaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.secondaryColor.hex};"></div>
+                ${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.tertiaryColor.hex};"></div>
+                ${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <i class="fas fa-eye"></i> ${dragon.eyeType.name}
+            </div>
+            <div class="url-box">${url}</div>
+            <button class="copy-btn">Copy URL</button>
+        `;
+        
+        container.appendChild(egg);
+            });
+        setupOffspringCopyButtons();
+}
+        });
+        
+        // Breed change listeners
+        document.querySelectorAll('select[id$="-breed"]').forEach(select => {
+            select.addEventListener('change', function() {
+                const parentNum = this.id.includes('parent1') ? 1 : 2;
+                updateGeneDropdowns(parentNum);
+                const dragon = getDragonFromForm(parentNum);
+                updateDragonDisplay(dragon, parentNum);
+            });
+        });
+        
+        // General change listeners
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', function() {
+                const parentNum = this.id.includes('parent1') ? 1 : 2;
+                const dragon = getDragonFromForm(parentNum);
+                updateDragonDisplay(dragon, parentNum);
+            });
+        });
+        
+        debugLog('Event listeners setup complete');
+        
+    } catch (error) {
+        console.error('Error setting up event listeners:', error);
+    }
+}
+
+// =========================
+// INITIALIZATION
+// =========================
+function initializeApp() {
+    debugLog('Initializing application');
+    
+    try {
+        populateDropdowns();
+        setupEventListeners();
+        
+        // Generate initial random parents
+        const parent1 = generateRandomDragon();
+        const parent2 = generateRandomDragon();
+        updateDragonDisplay(parent1, 1);
+        updateDragonDisplay(parent2, 2);
+        
+        debugLog('Application initialized successfully');
+        
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+    }
+}
+
+// Start the application
+document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
