@@ -2346,7 +2346,6 @@ function copyToClipboard(elementId) {
     });
 }
 
-// ADD THIS FUNCTION
 function canBreed(parent1, parent2) {
     const parent1IsAncient = parent1.breed.rarity === "Ancient";
     const parent2IsAncient = parent2.breed.rarity === "Ancient";
@@ -2357,6 +2356,14 @@ function canBreed(parent1, parent2) {
     }
     
     return true;
+}
+
+// ADD THIS FUNCTION HERE
+function clearOffspringContainer() {
+    const container = document.getElementById('offspring-container');
+    if (container) {
+        container.innerHTML = '';
+    }
 }
 
 function setupOffspringCopyButtons() {
@@ -2752,56 +2759,73 @@ function setupEventListeners() {
             updateDragonDisplay(parent2, 2);
         });
         
-        // Breed button
-        document.getElementById('breed-btn').addEventListener('click', () => {
-            debugLog('Breed button clicked');
-            try {
-                const parent1 = getDragonFromForm(1);
-                const parent2 = getDragonFromForm(2);
-                
-                // Check if breeding is possible
-                if (!canBreed(parent1, parent2)) {
-                    const container = document.getElementById('offspring-container');
-                    if (container) {
-                        container.innerHTML = `
-                            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                                <h3>Breeding Incompatible</h3>
-                                <p>Ancient breeds can only breed with the same exact breed.</p>
-                                <p>${parent1.breed.name} cannot breed with ${parent2.breed.name}.</p>
-                            </div>
-                        `;
-                    }
-                    return;
-                }
-                
-                // Generate offspring
-                const offspring = breedDragons(parent1, parent2);
-                displayOffspring(offspring);
-                
-            } catch (error) {
-                console.error('Error breeding dragons:', error);
+      // Breed button
+document.getElementById('breed-btn').addEventListener('click', () => {
+    debugLog('Breed button clicked');
+    try {
+        const parent1 = getDragonFromForm(1);
+        const parent2 = getDragonFromForm(2);
+        
+        // Clear previous results first
+        clearOffspringContainer();
+        
+        // Check if breeding is possible
+        if (!canBreed(parent1, parent2)) {
+            const container = document.getElementById('offspring-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>Breeding Incompatible</h3>
+                        <p>Ancient breeds can only breed with the same exact breed.</p>
+                        <p>${parent1.breed.name} cannot breed with ${parent2.breed.name}.</p>
+                    </div>
+                `;
             }
-        });
+            return;
+        }
         
-        // Breed change listeners
-        document.querySelectorAll('select[id$="-breed"]').forEach(select => {
-            select.addEventListener('change', function() {
-                const parentNum = this.id.includes('parent1') ? 1 : 2;
-                updateGeneDropdowns(parentNum);
-                const dragon = getDragonFromForm(parentNum);
-                updateDragonDisplay(dragon, parentNum);
-            });
-        });
+        // Generate offspring
+        const offspring = breedDragons(parent1, parent2);
+        displayOffspring(offspring);
         
-        // General change listeners
-        document.querySelectorAll('select').forEach(select => {
-            select.addEventListener('change', function() {
-                const parentNum = this.id.includes('parent1') ? 1 : 2;
-                const dragon = getDragonFromForm(parentNum);
-                updateDragonDisplay(dragon, parentNum);
-            });
-        });
+    } catch (error) {
+        console.error('Error breeding dragons:', error);
+    }
+});
+        
+   // Breed change listeners
+document.querySelectorAll('select[id$="-breed"]').forEach(select => {
+    select.addEventListener('change', function() {
+        const parentNum = this.id.includes('parent1') ? 1 : 2;
+        updateGeneDropdowns(parentNum);
+        const dragon = getDragonFromForm(parentNum);
+        updateDragonDisplay(dragon, parentNum);
+        
+        // Clear any error messages when breed changes
+        clearOffspringContainer();
+        
+        // Optional: Auto-breed if breeds become compatible
+        const parent1 = getDragonFromForm(1);
+        const parent2 = getDragonFromForm(2);
+        if (canBreed(parent1, parent2)) {
+            const offspring = breedDragons(parent1, parent2);
+            displayOffspring(offspring);
+        }
+    });
+});
+
+// General change listeners (for other dropdowns)
+document.querySelectorAll('select:not([id$="-breed"])').forEach(select => {
+    select.addEventListener('change', function() {
+        const parentNum = this.id.includes('parent1') ? 1 : 2;
+        const dragon = getDragonFromForm(parentNum);
+        updateDragonDisplay(dragon, parentNum);
+        
+        // Clear any error messages when other traits change
+        clearOffspringContainer();
+    });
+});
         
         debugLog('Event listeners setup complete');
         
