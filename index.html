@@ -2329,14 +2329,14 @@ tertiaryGenes: [
             });
         }
 
-        // Filter genes by breed compatibility
-        function filterGenesForBreed(genes, breedId) {
-            return genes.filter(gene => 
-                gene.forBreed === null || 
-                gene.forBreed === undefined || 
-                (Array.isArray(gene.forBreed) && gene.forBreed.includes(breedId)
-            );
-        }
+// Filter genes by breed compatibility
+function filterGenesForBreed(genes, breedId) {
+    return genes.filter(gene => 
+        gene.forBreed === null || 
+        gene.forBreed === undefined || 
+        (Array.isArray(gene.forBreed) && gene.forBreed.includes(breedId))
+    );
+}
 
         // Get a random gene that's compatible with the breed
         function getRandomGeneForBreed(genes, breedId) {
